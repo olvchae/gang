@@ -226,9 +226,10 @@ body {
   /* Letter (open state) */
   .letter-container.open .letter {
     width: 80vw; /* Reduced width for smaller screens */
-    height: auto; /* Let content define height */
+    height: 60vh; /* Reduced height for smaller screens */
     padding: 20px 25px;
     font-size: 14px;
+    overflow-y: auto; /* Ensure scrollability */
   }
 
   /* Adjust h2 for smaller screens */
