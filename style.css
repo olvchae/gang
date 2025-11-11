@@ -1,0 +1,238 @@
+body {
+  margin: 0;
+  height: 100vh;
+  background-color: #e6f9d5; /* 배경색을 다시 body로 이동 */
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Pretendard', sans-serif;
+}
+
+/* Notification Box */
+#notification-box {
+  position: fixed; /* Fixed to viewport */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* Center on screen */
+  width: 450px; /* Increased width to fit text on one line */
+  background-color: rgba(76, 175, 80, 0.2); /* Original green with high transparency */
+  color: white;
+  padding: 20px 0; /* Adjusted padding for larger size */
+  border-radius: 25px; /* Even rounder corners */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Slightly stronger shadow for prominence */
+  font-size: 1.3em; /* Larger font size */
+  font-weight: bold;
+  text-align: center;
+  z-index: 100; /* Ensure it's on top */
+  opacity: 1; /* Fully opaque text */
+  cursor: pointer; /* Indicate clickable */
+  transition: opacity 0.5s, visibility 0.5s, transform 0.5s, width 0.5s, padding 0.5s, font-size 0.5s; /* Smooth transitions for properties */
+  animation: vibrate 0.4s ease-in-out 4; /* More pronounced vibration effect on load */
+}
+
+@keyframes vibrate {
+  0% { transform: translate(-50%, -50%) translateX(-5px); }
+  25% { transform: translate(-50%, -50%) translateX(5px); }
+  50% { transform: translate(-50%, -50%) translateX(-5px); }
+  75% { transform: translate(-50%, -50%) translateX(5px); }
+  100% { transform: translate(-50%, -50%) translateX(0); }
+}
+
+/* Hide notification when letter is open */
+.letter-container.open #notification-box {
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* 네잎클로버 떠다니는 영역 */
+.clover-area {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 1; /* 편지보다 뒤, 배경보다 앞에 위치 */
+  pointer-events: none; /* 클릭 이벤트를 통과시켜 편지가 클릭되도록 함 */
+}
+
+/* 편지 컨테이너 */
+.letter-container {
+  position: relative;
+  z-index: 10;
+  opacity: 0; /* Initially hidden */
+  visibility: hidden; /* Initially hidden */
+  transition: opacity 0.5s, visibility 0.5s; /* Smooth transition for appearance */
+}
+
+.letter-container.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* 봉투 전체 */
+.envelope {
+  position: relative;
+  width: 300px;
+  height: 200px;
+  background: #fefefe; /* 원래 색으로 변경 */
+  border: 2px solid #cfcfcf; /* 테두리 복원 */
+  border-radius: 10px;
+  box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+  cursor: pointer;
+  transition: transform 0.4s;
+  z-index: 20;
+}
+
+.envelope:hover {
+  transform: translateY(-10px);
+}
+
+/* 봉투 윗부분(뚜껑) */
+.envelope .flap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100px;
+  background: #f2f2f2; /* 원래 색으로 변경 */
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  transform-origin: top;
+  transition: transform 0.5s ease-in-out;
+}
+
+/* 봉투 하단 */
+.envelope .bottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100px;
+  background: #ffffff; /* 원래 색으로 변경 */
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+}
+
+/* 편지 */
+.letter {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 280px;
+  height: 180px;
+  background-color: #fffaf0;
+  background-image: repeating-linear-gradient(to bottom, transparent 0, transparent 27.8px, #e0e0e0 27.8px, #e0e0e0 28.8px);
+  background-size: 100% 28.8px;
+  background-position-y: 20px; /* Adjusted to align with new line-height and padding */
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  padding: 20px 30px;
+  font-size: 16px;
+  line-height: 1.8;
+  text-align: left;
+  opacity: 0;
+  visibility: hidden;
+  transform: translate(-50%, -50%) scale(0.8);
+  transform-origin: center;
+  transition: opacity 0.2s ease-out, visibility 0.2s ease-out, transform 0.5s ease-out, width 0.5s ease-out, height 0.5s ease-out, padding 0.5s ease-out;
+  z-index: 15;
+  overflow: hidden; /* Added to hide overflow during transition */
+}
+
+/* --- 애니메이션 효과 --- */
+
+/* 컨테이너가 open 클래스를 가질 때 */
+.letter-container.open .envelope .flap {
+  transform: rotateX(180deg);
+}
+
+.letter-container.open .letter {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, -50%) scale(1); /* Adjusted translateY to -50% for vertical centering */
+  width: 550px; /* Made wider */
+  height: 300px; /* Set a fixed, shorter height */
+  padding: 30px 40px; /* Adjusted padding */
+  overflow-y: auto; /* Added for scrollability */
+  z-index: 30;
+  transition-delay: 0.5s;
+  cursor: pointer;
+}
+
+/* 네잎클로버 애니메이션 */
+.clover {
+  position: absolute;
+  font-size: 1.5rem;
+  animation: floatClover linear infinite;
+  opacity: 0.8;
+}
+
+@keyframes floatClover {
+  from {
+    transform: translateY(100vh) rotate(0deg);
+    opacity: 0;
+  }
+  20% { opacity: 1; }
+  to {
+    transform: translateY(-10vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+.letter-container h2 {
+    position: absolute;
+    top: 15%;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.5s 0.5s, top 0.5s 0.5s;
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #333;
+    z-index: 5;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+}
+
+.letter-container.open h2 {
+    opacity: 1;
+    top: 10%;
+}
+
+/* --- Responsive Adjustments for iPhone screens --- */
+@media (max-width: 600px) {
+  /* Notification Box */
+  #notification-box {
+    width: 90vw; /* 90% of viewport width */
+    font-size: 1em; /* Slightly smaller font */
+    padding: 15px 0;
+  }
+
+  /* Envelope */
+  .envelope {
+    width: 80vw;
+    height: 50vw; /* Maintain aspect ratio */
+  }
+
+  /* Letter (closed state) */
+  .letter {
+    width: 75vw;
+    height: 45vw;
+    padding: 15px 20px;
+    font-size: 14px;
+    background-size: 100% 25.2px; /* Adjusted for 14px font-size * 1.8 line-height */
+    background-position-y: 15px; /* Adjusted for new padding */
+  }
+
+  /* Letter (open state) */
+  .letter-container.open .letter {
+    width: 80vw; /* Reduced width for smaller screens */
+    height: auto; /* Let content define height */
+    padding: 20px 25px;
+    font-size: 14px;
+  }
+
+  /* Adjust h2 for smaller screens */
+  .letter-container h2 {
+    font-size: 1em;
+  }
+}
